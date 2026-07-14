@@ -89,7 +89,7 @@ int main() {
 
     srand(time(NULL));
 
-    int max = 4 * 1000 * 1000;
+    int max = 6 * 1000 * 1000;
     int min = 1;
     int step = 20 * 1000;
 
