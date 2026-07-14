@@ -62,7 +62,30 @@ To quiesce the system for these experiments, the following actions were recommen
 #### Demonstrated Effectiveness
 The sources demonstrate the effectiveness of this process through an experiment using a Cilk program. In a standard, "noisy" environment, the slowest runs were **almost 25% slower** than the fastest runs. After quiescing the system—specifically by turning off Turbo Boost, hyperthreading, and background daemons—the variance dropped significantly, with nearly all 100 runs producing the exact same value within a margin of **less than 1%**.
 
-#### Commands Used in This Project
+## Describing Files
+
+* **`mergesort_benchmark.c`**: This C program performs the merge sort benchmark. It sorts an array of up to 6,000,000 elements, measures the execution time and CPU temperature for different array sizes, and saves the results in a CSV file.
+* **`notebook.ipynb`**: A Jupyter notebook used for plotting and visualizing the results.
+* **`measurements_noisy.csv` & `measurements_quiesce.csv`**: Two CSV result files storing the output data from runs before and after quiescing the system.
+
+## How to Run
+
+To run the benchmark, first compile the code with GCC using the `-O2` optimization flag:
+
+```bash
+gcc -O2 mergesort_benchmark.c -o mergesort_benchmark
+```
+
+Then, execute the program:
+
+```bash
+./mergesort_benchmark
+```
+
+The execution will take a couple of minutes. Once completed, the result will be saved in a `measurements.csv` file. You can then use the `notebook.ipynb` notebook to plot the data.
+
+
+### Commands Used reduce measurement noise
 
 The following commands were used on Ubuntu Linux to reduce measurement noise during benchmarking.
 
@@ -101,27 +124,6 @@ taskset -c 2 ./mergesort_benchmark.out
 
 During each benchmark run, no user interaction (keyboard or mouse) occurred, all unnecessary applications were closed, and CPU frequency and temperature were recorded before every execution. These settings are temporary and revert to their default values after a system reboot.
 
-## Describing Files
-
-* **`mergesort_benchmark.c`**: This C program performs the merge sort benchmark. It sorts an array of up to 6,000,000 elements, measures the execution time and CPU temperature for different array sizes, and saves the results in a CSV file.
-* **`notebook.ipynb`**: A Jupyter notebook used for plotting and visualizing the results.
-* **`measurements_noisy.csv` & `measurements_quiesce.csv`**: Two CSV result files storing the output data from runs before and after quiescing the system.
-
-## How to Run
-
-To run the benchmark, first compile the code with GCC using the `-O2` optimization flag:
-
-```bash
-gcc -O2 mergesort_benchmark.c -o mergesort_benchmark
-```
-
-Then, execute the program:
-
-```bash
-./mergesort_benchmark
-```
-
-The execution will take a couple of minutes. Once completed, the result will be saved in a `measurements.csv` file. You can then use the `notebook.ipynb` notebook to plot the data.
 
 ## Results
 
