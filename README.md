@@ -33,35 +33,30 @@ The sources demonstrate the effectiveness of this process through an experiment 
 
 ## Report
 
-### `measurements1.csv`
+## System settings
 
 | Property | Value |
 |----------|-------|
 | Benchmark | Merge Sort |
-| Date | 2026-07-13 |
-| RAM | 8 GB |
-| CPU | Intel Core i7-1165G7 (11th Gen) |
+| CPU | Intel® Core™ i7-6700HQ |
 | Architecture | x86_64 |
 | Physical Cores | 4 |
 | Logical CPUs | 8 |
 | Threads per Core | 2 |
-| Base Frequency | 2.80 GHz |
-| Maximum Frequency | 4.70 GHz |
-| L1d Cache | 192 KiB |
+| Base Frequency | 2.60 GHz |
+| Maximum Frequency | 3.50 GHz |
+| L1d Cache | 128 KiB |
 | L1i Cache | 128 KiB |
-| L2 Cache | 5 MiB |
-| L3 Cache | 12 MiB |
-| Operating System | Ubuntu 26.04 LTS |
-| Kernel | Linux 7.0.0-27-generic |
+| L2 Cache | 1 MiB |
+| L3 Cache | 6 MiB |
+| Memory | 12 GiB RAM, 4 GiB Swap |
+| Operating System | Ubuntu 25.10 |
+| Kernel | Linux 6.17.0-14-generic |
 | Compiler | GCC 15.2.0 |
 | Compiler Flags | `-O2` |
-| Executable | ELF 64-bit PIE (x86-64), dynamically linked |
-| Quiescing a System | False |
-| Timing Function | `clock_gettime(CLOCK_MONOTONIC)` |
-| Data Type | `double` |
-| CPU Metrics | CPU frequency and temperature sampled before each benchmark run |
 
 ## References
 
 [1] MIT OpenCourseWare, 10. Measurement and Timing, (Sep. 23, 2019). Accessed: Jul. 13, 2026. [Online Video]. Available: https://www.youtube.com/watch?v=LvX3g45ynu8
+
 [2] C. E. Leiserson, “MEASUREMENT AND TIMING”.
