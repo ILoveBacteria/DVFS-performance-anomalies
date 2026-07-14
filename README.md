@@ -1,12 +1,23 @@
 # DVFS-performance-anomalies
 
-This project is a simulation and study of performance measurement anomalies in software engineering, specifically focusing on the timing of a **merge sort** routine. Inspired by a study by presented in MIT’s Performance Engineering course, the project demonstrates how modern hardware features like **Dynamic Frequency and Voltage Scaling (DVFS)** can create "roller coaster" patterns in execution time rather than a smooth algorithmic growth curve. By measuring the runtime of sorting increasingly large arrays using `CLOCK_MONOTONIC`, this simulation exposes how system noise and thermal throttling wreak havoc on deterministic performance data.
-By measuring the runtime of sorting increasingly large arrays using `CLOCK_MONOTONIC`, this simulation exposes how system noise and thermal throttling wreak havoc on deterministic performance data.
+![Python](https://img.shields.io/badge/Python-3.13+-3776AB?logo=python&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-Ubuntu-E95420?logo=ubuntu&logoColor=white)
+![Benchmarking](https://img.shields.io/badge/Benchmarking-System%20Performance-blue)
+![DVFS](https://img.shields.io/badge/DVFS-CPU%20Frequency-orange)
+![Reproducible](https://img.shields.io/badge/Reproducible-Research-009688)
+![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)
+![License](https://img.shields.io/github/license/ILoveBacteria/DVFS-performance-anomalies)
+![GitHub stars](https://img.shields.io/github/stars/ILoveBacteria/DVFS-performance-anomalies?style=social)
+
+This project is a simulation and study of performance measurement anomalies in software engineering, specifically focusing on the timing of a `merge sort` routine. Inspired by a study by presented in MIT’s Performance Engineering course [1, 2], the project demonstrates how modern hardware features like **Dynamic Frequency and Voltage Scaling (DVFS)** can create "roller coaster" patterns in execution time rather than a smooth algorithmic growth curve.
+
+This simulation exposes how system noise and thermal throttling wreak havoc on deterministic performance data.
+By measuring the runtime of sorting increasingly large arrays.
 
 ![MIT Roller Coaster Effect](assets/MIT_slide.png)
 *This image shows the "roller coaster" effect in timing measurements, as presented in MIT's Performance Engineering course [2].*
 
-To obtain reliable and repeatable results, I have performed **"quiescing system"** as part of this project.
+To obtain reliable and repeatable results, I have performed `quiescing system` as part of this project.
 
 ## Background
 
@@ -17,10 +28,20 @@ This paper, authored by **Mytkowicz et al.**, is a foundational reference in per
 *   **Linker Order:** Changing the order of `.o` files in a linker command can have a larger impact on performance than moving from `-O2` to `-O3` optimization levels.
 *   **Program Name Length:** Because an executable's name is stored in an environment variable on the call stack, simply lengthening a program's name can shift stack alignment and slow down data access by causing it to cross page boundaries.
 
+### MIT OpenCourseWare, 10. Measurement and Timing
+
+This MIT 6.172 lecture explores why deterministic code produces anomalous "roller coaster" runtimes on modern hardware
+. It identifies DVFS (Dynamic Frequency and Voltage Scaling) and system noise as primary culprits that disrupt `O(nlogn)` performance models
+. The video provides rigorous techniques for quiescing systems to achieve the repeatable measurements necessary for performance engineering
+
 ## Method
 
 ### Quiescing a System
 **Quiescing a system** refers to the process of making a computer "quiet" enough to obtain reliable and repeatable timing measurements by eliminating external "noise". Based on the sources, this involves several core concepts:
+
+
+![Quiescing a System](assets/noises_in_system.png)
+*This image visualizes the quiescing process and reducing the variance in measurement.*
 
 #### The Purpose: Reducing Variance
 The primary goal of quiescing is to **reduce variability**. Following the quality control theories of **Genichi Taguchi**, it is essential to minimize the "spread" (variance) of data before attempting to improve a product. In software, high variance makes it impossible to determine if a code change actually improved performance or if the result was merely a byproduct of random noise. A properly quiesced system should produce essentially the same runtime for a deterministic program every time it is executed.
@@ -40,6 +61,45 @@ To quiesce the system for these experiments, the following actions were recommen
 
 #### Demonstrated Effectiveness
 The sources demonstrate the effectiveness of this process through an experiment using a Cilk program. In a standard, "noisy" environment, the slowest runs were **almost 25% slower** than the fastest runs. After quiescing the system—specifically by turning off Turbo Boost, hyperthreading, and background daemons—the variance dropped significantly, with nearly all 100 runs producing the exact same value within a margin of **less than 1%**.
+
+#### Commands Used in This Project
+
+The following commands were used on Ubuntu Linux to reduce measurement noise during benchmarking.
+
+**Set the CPU governor to `performance`:**
+
+```bash
+for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+do
+    echo performance | sudo tee $cpu
+done
+```
+
+**Disable Intel Turbo Boost:**
+
+```bash
+echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
+```
+
+**Disconnect the network:**
+
+```bash
+nmcli networking off
+```
+
+**Disable Hyperthreading (SMT):**
+
+```bash
+echo off | sudo tee /sys/devices/system/cpu/smt/control
+```
+
+**Pin the benchmark to CPU core 2:**
+
+```bash
+taskset -c 2 ./mergesort_benchmark.out
+```
+
+During each benchmark run, no user interaction (keyboard or mouse) occurred, all unnecessary applications were closed, and CPU frequency and temperature were recorded before every execution. These settings are temporary and revert to their default values after a system reboot.
 
 ## Describing Files
 
