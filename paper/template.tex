@@ -1,0 +1,462 @@
+\documentclass{article}
+
+
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{pgfplots} % for axis environment
+\pgfplotsset{compat=1.18}
+\usepackage{tikz} % for tikzpicture environment
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+\usepackage{minted} % code highlighter
+
+\title{Analyzing the Impact of DVFS and System Noise on Merge Sort Benchmarking Through System Quiescing}
+
+%\date{September 9, 1985}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+\author{ \href{https://orcid.org/0009-0003-8910-0576}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Mohammad-Moein Arabi} \\
+	College of Engineering \\
+	University of Tehran \\
+	\texttt{moein.arabi@ut.ac.ir} \\
+}
+
+% Uncomment to remove the date
+%\date{}
+
+\renewcommand{\headeright}{arXiv Preprint}
+\renewcommand{\undertitle}{arXiv Preprint}
+\renewcommand{\shorttitle}{Analyzing the Impact of DVFS and System Noise}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+\hypersetup{
+    pdftitle={Analyzing the Impact of DVFS and System Noise on Merge Sort Benchmarking Through System Quiescing},
+    pdfsubject={Performance Engineering and Software Benchmarking},
+    pdfauthor={Mohammad-Moein Arabi},
+    pdfkeywords={Performance Engineering, Benchmarking, Dynamic Voltage and Frequency Scaling (DVFS), Merge Sort, System Quiescing, Thermal Throttling, Performance Measurement},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Accurate performance evaluation of computer programs requires reliable execution time measurements. However, modern computer systems contain various hardware and software mechanisms that introduce variability into timing measurements, making the observed performance differ from the algorithm's actual behavior. In this study, the execution time of the Merge Sort algorithm was measured for different input sizes under two experimental conditions: normal system operation and a quiesced system. The results demonstrate that system noise produces noticeable fluctuations in execution time, while reducing these sources of interference significantly improves the stability and repeatability of the measurements. These findings highlight the importance of controlling system noise when conducting performance benchmarking and demonstrate that system quiescing provides a more reliable environment for performance evaluation.
+\end{abstract}
+
+% keywords can be removed
+\keywords{Performance Engineering \and Benchmarking \and Dynamic Voltage and Frequency Scaling (DVFS) \and Merge Sort \and System Quiescing \and Thermal Throttling \and Performance Measurement}
+
+
+\section{Introduction}
+
+In this project, the anomalous behavior observed in measuring program execution time on modern computer systems is investigated. The primary focus of the experiment is to measure the execution time of the Merge Sort algorithm and analyze the factors that introduce variability into the measured results. One of the most significant factors is Dynamic Voltage and Frequency Scaling (DVFS), which automatically adjusts the processor's operating frequency according to the workload and thermal conditions, thereby affecting program execution time.
+
+As illustrated in Figure~\ref{fig:mit_roller_coaster}, execution time may exhibit oscillatory patterns, known as the \emph{Roller Coaster Effect}, instead of following the smooth trend predicted by the algorithm's theoretical time complexity. In addition to DVFS, factors such as background processes, operating system interrupts, processor temperature variations, and other hardware and software characteristics also influence the measurement results.
+
+In this project, besides demonstrating this phenomenon, the \emph{Quiescing System} approach was employed to reduce the impact of these interfering factors. The objective of this approach is to establish a stable execution environment and obtain accurate, reliable, and repeatable measurements so that the true behavior of the algorithm can be evaluated without the influence of system noise.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{MIT_slide.png}
+    \caption{This figure illustrates the \emph{Roller Coaster Effect} in execution time measurements, as presented in the Performance Engineering course at MIT. \citep{leiserson_measurement_nodate, mit_opencourseware_10_2019}}
+    \label{fig:mit_roller_coaster}
+\end{figure}
+
+\section{Background}
+
+\subsection{Producing Wrong Data Without Doing Anything Obviously Wrong}
+This paper \citep{mytkowicz2009producing}, is a foundational reference in performance engineering. It demonstrates that performance measurements can be significantly biased by ``seemingly irrelevant'' factors that shift memory alignment. For example:
+\begin{itemize}
+    \item Linker Order: Changing the order of .o files in a linker command can have a larger impact on performance than moving from -O2 to -O3 optimization levels.
+    \item Program Name Length: Because an executable's name is stored in an environment variable on the call stack, simply lengthening a program's name can shift stack alignment and slow down data access by causing it to cross page boundaries.
+\end{itemize}
+
+\subsection{Quiescing a System}
+
+Quiescing a system refers to a set of procedures performed to minimize sources of system noise, thereby enabling more accurate, stable, repeatable, and deterministic execution time measurements. Various factors, including operating system activity, background processes, and processor power management mechanisms, introduce fluctuations in execution time. Therefore, before conducting performance evaluation experiments, these sources of variability should be minimized or controlled as much as possible. As illustrated in Figure~\ref{fig:quiescing}, the quiescing process systematically reduces external interference, stabilizes hardware behavior, and isolates the benchmarked application, resulting in significantly lower measurement variance and more reliable performance data.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{noises_in_system.png}
+    \caption{Schematic illustration of the system quiescing process and the reduction of measurement result variance. \emph{Generated by ChatGPT \citep{openai_chatgpt_2026}}}
+    \label{fig:quiescing}
+\end{figure}
+
+\subsection{Major Sources of System Noise}
+
+Modern computer systems contain numerous factors that affect the accuracy of execution time measurements. The most important of these include \citep{leiserson_measurement_nodate}:
+
+\begin{itemize}
+    \item Operating system activity: Background daemon processes, scheduled tasks (Cron jobs), interrupts generated by network traffic, and even mouse movements or keyboard input can interfere with timing measurements.
+
+    \item Hardware features: Dynamic Voltage and Frequency Scaling (DVFS), which dynamically adjusts the processor frequency according to temperature and workload, as well as Turbo Boost, which changes the processor frequency depending on the number of active cores, introduce variability into program execution time.
+
+    \item Processor architectural features: Hyper-Threading, which allows multiple threads to share processor execution resources, is another factor that contributes to variability in timing measurements.
+\end{itemize}
+
+\section{Experimental Methodology}
+
+\subsection{Experimental Platform}
+
+All experiments were conducted on the hardware and software platform summarized in Table~\ref{tab:system_spec}. The benchmark program was compiled using GCC version 15.2.0 with the \texttt{-O2} optimization level. Unless otherwise stated, all reported results were obtained on this platform.
+
+\begin{table}
+\centering
+\caption{Hardware and software configuration of the experimental platform.}
+\label{tab:system_spec}
+\begin{tabular}{ll}
+\hline
+Property & Value \\
+\hline
+Processor & Intel\textsuperscript{\textregistered} Core\texttrademark\ i7-6700HQ \\
+Architecture & x86\_64 \\
+Physical Cores & 4 \\
+Logical CPUs & 8 \\
+Base Frequency & 2.60 GHz \\
+Maximum Frequency & 3.50 GHz \\
+L3 Cache & 6 MiB \\
+Memory & 12 GiB RAM \\
+Operating System & Ubuntu 25.10 \\
+Kernel & Linux 6.17.0-14-generic \\
+Compiler & GCC 15.2.0 \\
+Compiler Flags & \texttt{-O2} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Code Description}
+
+To conduct the experiment, a program was developed in C to measure the performance of the Merge Sort algorithm for arrays of different sizes. The program first creates and initializes an array of a specified size, then measures the execution time of the sorting algorithm while recording the CPU temperature. This procedure is repeated for different array sizes, and all collected measurements are finally stored in a CSV file.
+
+\subsubsection{Array Size Selection}
+
+The maximum array size was set to 6,000,000 elements. In the reference \citep{leiserson_measurement_nodate}, the maximum size was 4,000,000 elements; however, in this project, the limit was increased to better observe the algorithm's behavior for larger input sizes.
+
+\begin{minted}[linenos, bgcolor=lightgray]{c}
+int max = 6 * 1000 * 1000;
+int min = 1;
+int step = 20 * 1000;
+\end{minted}
+
+\subsubsection{Measuring CPU Temperature and Execution Time}
+
+Before executing the algorithm, the CPU temperature is recorded to monitor temperature variations throughout the experiment. Under Linux, the CPU temperature is obtained from the following file:
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+cat /sys/class/thermal/thermal_zone0/temp
+\end{minted}
+
+The execution time of the algorithm is then measured using the \texttt{clock\_gettime()} function with the \texttt{CLOCK\_MONOTONIC} clock.
+
+\begin{minted}[linenos, bgcolor=lightgray]{c}
+double current_temp = get_cpu_temperature();
+
+clock_gettime(CLOCK_MONOTONIC, &start);
+my_sort(A, n);
+clock_gettime(CLOCK_MONOTONIC, &end);
+\end{minted}
+
+\subsubsection{Execution Progress and Data Collection}
+
+After each measurement, the program displays its execution progress in the terminal, while the array size, execution time, and CPU temperature are stored in memory.
+
+\begin{minted}[linenos, bgcolor=lightgray]{c}
+printf("progress %.1f%%, size %d, time %.6f sec, temp %.2f C\n",
+       progress, n, tdiff, current_temp);
+
+storage[measurement_count].size = n;
+storage[measurement_count].delay = tdiff;
+storage[measurement_count].temp = current_temp;
+\end{minted}
+
+\subsubsection{Saving the Results to a CSV File}
+
+After all measurements have been completed, the data stored in memory are written to a CSV file for subsequent visualization and analysis.
+
+\begin{minted}[linenos, bgcolor=lightgray]{c}
+FILE *csv_file = fopen("measurements.csv", "w");
+fprintf(csv_file,
+        "Array Size,Delay (sec),CPU Temperature (C)\n");
+
+for (int i = 0; i < measurement_count; i++) {
+    fprintf(csv_file, "%d,%.6f,%.2f\n",
+            storage[i].size,
+            storage[i].delay,
+            storage[i].temp);
+}
+\end{minted}
+
+A sample of the generated CSV file is shown in Table~\ref{tab:csv_sample}.
+
+\begin{table}
+\centering
+\caption{Sample of the data stored in the CSV file}
+\label{tab:csv_sample}
+
+\begin{tabular}{ccc}
+\hline
+Array Size & Delay (sec) & CPU Temperature ($^\circ$C) \\
+\hline
+1      & 0.000000 & 49.00 \\
+20001  & 0.002278 & 49.00 \\
+40001  & 0.005453 & 49.00 \\
+60001  & 0.009425 & 49.00 \\
+80001  & 0.015302 & 49.00 \\
+100001 & 0.017824 & 49.00 \\
+120001 & 0.017458 & 49.00 \\
+140001 & 0.021326 & 49.00 \\
+160001 & 0.023287 & 49.00 \\
+\hline
+\end{tabular}
+
+\end{table}
+
+\subsubsection{Plotting the Results}
+
+After completing the measurements, the collected data were stored in a CSV file for subsequent analysis. The data were processed using the Pandas library~\citep{mckinney-proc-scipy-2010,reback2020pandas}, while the execution time measurements were visualized using Matplotlib~\citep{Hunter:2007}. To compare the experimental results with the theoretical time complexity of the Merge Sort algorithm, an \(n\log n\) curve was fitted to the measured data using SciPy~\citep{2020SciPy-NMeth}, allowing the observed behavior of the algorithm to be compared with its theoretical model.
+
+\subsection{Experimental Procedure}
+
+The first experiment was conducted without applying the system quiescing procedure. The benchmark program was compiled using the GCC compiler with the \texttt{-O2} optimization level:
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+gcc -O2 mergesort_benchmark.c -o mergesort_benchmark
+\end{minted}
+
+After executing the program, the execution time of the algorithm was measured for different array sizes, and the results were stored in a CSV file.
+
+The experiment was then repeated after applying system quiescing. Several steps were performed under Linux to reduce measurement noise, as described below.
+
+
+\subsubsection{Steps Taken to Quiesce the System}
+
+To reduce system noise and improve the repeatability of the experiments, the following measures were taken:
+
+\begin{itemize}
+    \item Reducing system noise: All unnecessary applications were closed, and the wireless network connection (Wi-Fi) was disabled.
+
+    \item Avoiding user interaction: No keyboard or mouse interaction occurred during the experiments, since such interactions generate interrupts that increase measurement error.
+
+    \item Disabling dynamic processor features: Features such as DVFS, Turbo Boost, and Hyper-Threading were disabled to ensure that the processor operated at a fixed frequency throughout the experiments.
+
+    \item Pinning the program to a dedicated CPU core: To prevent process migration between processor cores and to avoid the additional interrupts typically associated with core~0, the program was pinned to a dedicated CPU core using the Linux \texttt{taskset} command.
+\end{itemize}
+
+\subsubsection*{Setting the CPU Governor}
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+do
+    echo performance | sudo tee "$cpu"
+done
+\end{minted}
+
+\subsubsection*{Disabling Intel Turbo Boost}
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
+\end{minted}
+
+\subsubsection*{Disabling Network Connectivity}
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+nmcli networking off
+\end{minted}
+
+\subsubsection*{Disabling Hyper-Threading}
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+echo off | sudo tee /sys/devices/system/cpu/smt/control
+\end{minted}
+
+\subsubsection*{Pinning the Program to a CPU Core}
+
+\begin{minted}[linenos, bgcolor=lightgray]{bash}
+taskset -c 2 ./mergesort_benchmark
+\end{minted}
+
+\section{Results}
+
+To evaluate the impact of system noise on execution time measurements, two sets of experiments were performed. In the first experiment, measurements were collected under normal operating conditions without applying system quiescing. In the second experiment, the same measurements were repeated after applying the quiescing procedure.
+
+Figure~\ref{fig:measurement_noisy} shows the execution time measurements obtained under normal system conditions.
+
+% =================================================
+\pgfmathsetmacro{\FitA}{0.0000000122596478476081} 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+
+\begin{axis}[
+width=12cm,
+height=8cm,
+xlabel={Array Size},
+ylabel={Delay (sec)},
+grid=both,
+major grid style={dotted},
+minor grid style={dotted},
+legend style={
+    at={(0.02,0.98)},
+    anchor=north west,
+    draw=none,
+    fill=none
+},
+every axis plot/.append style={line width=1.2pt}
+]
+
+\addplot[blue]
+table[
+col sep=comma,
+x={Array Size},
+y={Delay (sec)}
+]{measurements_noisy.csv};
+\addlegendentry{Delay}
+
+\addplot[red,dashed,samples=300]
+table[
+col sep=comma,
+x expr=\thisrow{Array Size},
+y expr=\FitA*\thisrow{Array Size}*ln(\thisrow{Array Size})
+]{measurements_noisy.csv};
+\addlegendentry{$n\log n$}
+
+% Legend entry for CPU temperature
+\addlegendimage{green!60!black}
+\addlegendentry{CPU Temperature}
+
+\end{axis}
+
+\begin{axis}[
+width=12cm,
+height=8cm,
+axis x line=none,
+axis y line*=right,
+ylabel={CPU Temperature ($^\circ$C)},
+every axis plot/.append style={line width=1.2pt}
+]
+
+\addplot[green!60!black,opacity=0.3]
+table[
+col sep=comma,
+x={Array Size},
+y={CPU Temperature (C)}
+]{measurements_noisy.csv};
+
+\end{axis}
+
+\end{tikzpicture}
+\caption{Execution time measurements obtained before applying system quiescing.}
+\label{fig:measurement_noisy}
+\end{figure}
+
+% ==================================================
+
+\pgfmathsetmacro{\FitB}{0.000000012141299503706392}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+
+\begin{axis}[
+width=12cm,
+height=8cm,
+xlabel={Array Size},
+ylabel={Delay (sec)},
+grid=both,
+major grid style={dotted},
+minor grid style={dotted},
+legend style={
+    at={(0.02,0.98)},
+    anchor=north west,
+    draw=none,
+    fill=none
+},
+every axis plot/.append style={line width=1.2pt}
+]
+
+\addplot[blue]
+table[
+col sep=comma,
+x={Array Size},
+y={Delay (sec)}
+]{measurements_quiesce.csv};
+\addlegendentry{Delay}
+
+\addplot[red,dashed,samples=300]
+table[
+col sep=comma,
+x expr=\thisrow{Array Size},
+y expr=\FitB*\thisrow{Array Size}*ln(\thisrow{Array Size})
+]{measurements_quiesce.csv};
+\addlegendentry{$n\log n$}
+
+% Legend entry for CPU temperature
+\addlegendimage{green!60!black}
+\addlegendentry{CPU Temperature}
+
+\end{axis}
+
+\begin{axis}[
+width=12cm,
+height=8cm,
+axis x line=none,
+axis y line*=right,
+ylabel={CPU Temperature ($^\circ$C)},
+every axis plot/.append style={line width=1.2pt}
+]
+
+\addplot[green!60!black,opacity=0.3]
+table[
+col sep=comma,
+x={Array Size},
+y={CPU Temperature (C)}
+]{measurements_quiesce.csv};
+
+\end{axis}
+
+\end{tikzpicture}
+\caption{Execution time measurements obtained after applying system quiescing.}
+\label{fig:measurement_quiesced}
+\end{figure}
+
+% ================================================
+
+
+Figure~\ref{fig:measurement_quiesced} presents the execution time measurements obtained after applying the system quiescing procedure.
+
+
+\section{Discussion and Conclusion}
+
+A comparison of the two experiments shows that, before system quiescing, the execution time exhibited significant fluctuations, and the resulting curve deviated noticeably from a smooth trend. These fluctuations are primarily caused by factors such as dynamic CPU frequency scaling, background operating system activity, and other sources of system noise.
+
+After applying the quiescing procedure, the variability of the measurements was substantially reduced, resulting in a smoother execution time curve. The CPU temperature also remained more stable throughout the experiments, and the measured execution times more closely followed the theoretical \(n\log n\) complexity curve. These results demonstrate that minimizing external sources of interference leads to a more deterministic execution environment, thereby improving the accuracy, repeatability, and reliability of performance measurements.
+
+
+\section*{Code and Data Availability}
+
+The complete source code, experimental scripts, benchmark data, and instructions for reproducing the results presented in this paper are publicly available at:
+
+\url{https://github.com/ILoveBacteria/DVFS-performance-anomalies}
+
+
+\section*{Acknowledgment}
+
+Generative AI tools \citep{openai_chatgpt_2026} were used to assist with language refinement and code development. The authors reviewed and verified all generated content.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}  
+
+\end{document}
