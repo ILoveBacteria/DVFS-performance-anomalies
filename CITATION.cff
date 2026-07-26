@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the software repository. If you
+  reference the methodology, experimental design, or results, please also
+  cite the accompanying paper.
+title: DVFS Performance Anomalies
+type: software
+authors:
+  - family-names: "Arabi"
+    given-names: "Mohammad-Moein"
+    orcid: "https://orcid.org/0009-0003-8910-0576"
+repository-code: https://github.com/ILoveBacteria/DVFS-performance-anomalies
+version: 1.0.0
+date-released: 2026-07-26
+doi: 10.5281/zenodo.21609660
+license: MIT
+abstract: >-
+  Software accompanying the paper "Analyzing the Impact of DVFS and System
+  Noise on Merge Sort Benchmarking Through System Quiescing". The repository
+  contains the source code and experimental artifacts used to investigate the
+  effects of Dynamic Voltage and Frequency Scaling (DVFS), system noise, and
+  system quiescing on execution-time measurements and benchmarking reliability.
+
+keywords:
+  - DVFS
+  - Dynamic Voltage and Frequency Scaling
+  - Performance Engineering
+  - Performance Benchmarking
+  - Merge Sort
+  - System Quiescing
+  - System Noise
+  - Thermal Throttling
+  - Performance Measurement
+
+preferred-citation:
+  type: generic
+  title: Analyzing the Impact of DVFS and System Noise on Merge Sort Benchmarking Through System Quiescing
+  authors:
+    - family-names: "Arabi"
+      given-names: "Mohammad-Moein"
+      orcid: "https://orcid.org/0009-0003-8910-0576"
+  year: 2026
+  doi: 10.31224/7705
+  url: https://doi.org/10.31224/7705
+  publisher:
+    name: Engineering Archive
