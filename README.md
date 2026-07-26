@@ -8,7 +8,7 @@
 ![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)
 ![License](https://img.shields.io/github/license/ILoveBacteria/DVFS-performance-anomalies)
 ![GitHub stars](https://img.shields.io/github/stars/ILoveBacteria/DVFS-performance-anomalies?style=social)
-[![DOI](https://img.shields.io/badge/DOI-10.31224%2F7705-blue?logo=doi)](https://doi.org/10.31224/7705)
+[![Paper DOI](https://img.shields.io/badge/Paper_DOI-10.31224%2F7705-blue?logo=doi)](https://doi.org/10.31224/7705)
 
 This project is a simulation and study of performance measurement anomalies in software engineering, specifically focusing on the timing of a `merge sort` routine. Inspired by a study by presented in MIT’s Performance Engineering course [1, 2], the project demonstrates how modern hardware features like **Dynamic Frequency and Voltage Scaling (DVFS)** can create "roller coaster" patterns in execution time rather than a smooth algorithmic growth curve.
 
@@ -161,6 +161,28 @@ After quiescing the system, the delay curve becomes a straight line, and the CPU
 | Kernel | Linux 6.17.0-14-generic |
 | Compiler | GCC 15.2.0 |
 | Compiler Flags | `-O2` |
+
+## Citation
+
+If you use the implementation or reproduce the experiments, please cite the software repository.
+
+If you build upon the methodology, analysis, or results, please also cite the accompanying paper.
+
+### Software
+
+Use GitHub's **Cite this repository** button or the Zenodo DOI.
+
+### Paper
+
+```bibtex
+@misc{arabi_analyzing_2026,
+  title={Analyzing the Impact of DVFS and System Noise on Merge Sort Benchmarking Through System Quiescing},
+  author={Arabi, Mohammad-Moein},
+  year={2026},
+  doi={10.31224/7705},
+  url={https://doi.org/10.31224/7705}
+}
+```
 
 ## References
 
