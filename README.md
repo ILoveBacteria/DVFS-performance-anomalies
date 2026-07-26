@@ -8,6 +8,7 @@
 ![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)
 ![License](https://img.shields.io/github/license/ILoveBacteria/DVFS-performance-anomalies)
 ![GitHub stars](https://img.shields.io/github/stars/ILoveBacteria/DVFS-performance-anomalies?style=social)
+[![DOI](https://img.shields.io/badge/DOI-10.31224%2F7705-blue?logo=doi)](https://doi.org/10.31224/7705)
 
 This project is a simulation and study of performance measurement anomalies in software engineering, specifically focusing on the timing of a `merge sort` routine. Inspired by a study by presented in MIT’s Performance Engineering course [1, 2], the project demonstrates how modern hardware features like **Dynamic Frequency and Voltage Scaling (DVFS)** can create "roller coaster" patterns in execution time rather than a smooth algorithmic growth curve.
 
