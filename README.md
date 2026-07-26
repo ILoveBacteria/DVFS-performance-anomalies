@@ -9,6 +9,8 @@
 ![License](https://img.shields.io/github/license/ILoveBacteria/DVFS-performance-anomalies)
 ![GitHub stars](https://img.shields.io/github/stars/ILoveBacteria/DVFS-performance-anomalies?style=social)
 [![Paper DOI](https://img.shields.io/badge/Paper_DOI-10.31224%2F7705-blue?logo=doi)](https://doi.org/10.31224/7705)
+[![Software DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21609660.svg)](https://doi.org/10.5281/zenodo.21609660)
+
 
 This project is a simulation and study of performance measurement anomalies in software engineering, specifically focusing on the timing of a `merge sort` routine. Inspired by a study by presented in MIT’s Performance Engineering course [1, 2], the project demonstrates how modern hardware features like **Dynamic Frequency and Voltage Scaling (DVFS)** can create "roller coaster" patterns in execution time rather than a smooth algorithmic growth curve.
 
@@ -170,7 +172,17 @@ If you build upon the methodology, analysis, or results, please also cite the ac
 
 ### Software
 
-Use GitHub's **Cite this repository** button or the Zenodo DOI.
+Use GitHub's **Cite this repository** button or cite the Zenodo archive:
+
+```bibtex
+@software{arabi_dvfs_2026,
+  author       = {Mohammad-Moein Arabi},
+  title        = {DVFS Performance Anomalies},
+  year         = {2026},
+  doi          = {10.5281/zenodo.21609660},
+  url          = {https://doi.org/10.5281/zenodo.21609660}
+}
+```
 
 ### Paper
 
